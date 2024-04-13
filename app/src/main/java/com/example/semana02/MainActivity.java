@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.semana02.adapter.UserAdapter;
 import com.example.semana02.entity.User;
 import com.example.semana02.service.ServiceUser;
 import com.example.semana02.util.ConnectionRest;
@@ -26,12 +28,12 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    Spinner   spnUsuarios;
-    ArrayAdapter<String> adaptadorUsuarios;
-    ArrayList<String> listaUsuarios = new ArrayList<String>();
+    //ListView y Adapater
+    ListView lstUser;
+    ArrayList<User> listaUser = new ArrayList<User>();
+    UserAdapter userAdapter;
 
     Button   btnFiltrar;
-    TextView txtResultado;
 
     //conecta al servicio REST
     ServiceUser serviceUser;
@@ -50,45 +52,24 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //Relaciona las variables con las variables de la GUI
-        adaptadorUsuarios = new ArrayAdapter<String>(
-                this,
-                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-                listaUsuarios);
-        spnUsuarios = findViewById(R.id.spnUsuarios);
-        spnUsuarios.setAdapter(adaptadorUsuarios);
+        lstUser = findViewById(R.id.lstUsuarios);
+        userAdapter = new UserAdapter(this, R.layout.user_item, listaUser);
+        lstUser.setAdapter(userAdapter);
 
+
+        //Relaciona las variables con las variables de la GUI
         btnFiltrar = findViewById(R.id.btnFiltrar);
-        txtResultado = findViewById(R.id.txtResultado);
 
         //Conecta al servicio REST
         serviceUser = ConnectionRest.getConnecion().create(ServiceUser.class);
 
-        cargaUsuarios();
 
         btnFiltrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String item = spnUsuarios.getSelectedItem().toString();
-                int position = spnUsuarios.getSelectedItemPosition();
-                String id = item.split("-")[0];
-                String nombre = item.split("-")[1];
-
-                User objUserSeleccionado = listaTotalUsuarios.get(position);
-
-                String salida =  "Users: \n\n";
-                salida +=  "Position  " + position +"\n";
-                salida +=  "Id  " + id +"\n";
-                salida +=  "Name  " + nombre +"\n";
-                salida +=  "UserName  " + objUserSeleccionado.getUsername() +"\n";
-                salida +=  "Email  " + objUserSeleccionado.getEmail() +"\n";
-                salida +=  "Phone  " + objUserSeleccionado.getPhone() +"\n";
-
-                txtResultado.setText(salida);
-
+                cargaUsuarios();
             }
         });
-
 
     }
 
@@ -99,10 +80,9 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                    if (response.isSuccessful()){
                        listaTotalUsuarios = response.body();
-                       for(User x:listaTotalUsuarios){
-                           listaUsuarios.add(x.getId() + " - " + x.getName());
-                       }
-                       adaptadorUsuarios.notifyDataSetChanged();
+                       listaUser.clear();
+                       listaUser.addAll(listaTotalUsuarios);
+                       userAdapter.notifyDataSetChanged();
                    }
             }
             @Override

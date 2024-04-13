@@ -7,39 +7,25 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
-    android:layout_margin="20dp">
+    android:layout_margin="20dp"
+>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Listado de usuarios"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:padding="10dp"
-        android:textAlignment="center"/>
-
-    <Spinner
-        android:id="@+id/spnUsuarios"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"/>
-
-    <Button
+   <Button
         android:id="@+id/btnFiltrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Filtrar"
         android:padding="10dp"/>
 
-    <TextView
-        android:id="@+id/txtResultado"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"/>
 
-
-
-
+   <ListView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:id="@+id/lstUsuarios"
+       android:padding="10dp"
+       android:divider="@color/black"
+       android:dividerHeight="1dp"
+       />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
