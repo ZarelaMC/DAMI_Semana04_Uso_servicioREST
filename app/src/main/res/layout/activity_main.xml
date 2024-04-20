@@ -17,15 +17,21 @@
         android:text="Filtrar"
         android:padding="10dp"/>
 
-
-   <ListView
+<!-- Grilla -->
+   <GridView
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       android:id="@+id/lstUsuarios"
+       android:id="@+id/lstProductos"
        android:padding="10dp"
        android:divider="@color/black"
        android:dividerHeight="1dp"
+
+       android:numColumns="2"
+       android:horizontalSpacing="2dp"
+       android:verticalSpacing="2dp"
        />
+   <!-- Cantidad de columnas -->
+   <!-- Espacios -->
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

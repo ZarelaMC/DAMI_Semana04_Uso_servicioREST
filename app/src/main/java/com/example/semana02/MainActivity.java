@@ -1,12 +1,12 @@
 package com.example.semana02;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,9 +14,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.semana02.adapter.UserAdapter;
-import com.example.semana02.entity.User;
-import com.example.semana02.service.ServiceUser;
+import com.example.semana02.adapter.ProductAdapter;
+import com.example.semana02.entity.Product;
+import com.example.semana02.service.ServiceProducto;
 import com.example.semana02.util.ConnectionRest;
 
 import java.util.ArrayList;
@@ -29,16 +29,16 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     //ListView y Adapater
-    ListView lstUser;
-    ArrayList<User> listaUser = new ArrayList<User>();
-    UserAdapter userAdapter;
+    GridView lstProduct;
+    ArrayList<Product> listaProducto = new ArrayList<Product>();
+    ProductAdapter productAdapter;
 
     Button   btnFiltrar;
 
     //conecta al servicio REST
-    ServiceUser serviceUser;
+    ServiceProducto serviceProducto;
 
-    private List<User> listaTotalUsuarios;
+    private List<Product> listaTotalProductos;
 
 
     @Override
@@ -52,41 +52,53 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        lstUser = findViewById(R.id.lstUsuarios);
-        userAdapter = new UserAdapter(this, R.layout.user_item, listaUser);
-        lstUser.setAdapter(userAdapter);
+        lstProduct = findViewById(R.id.lstProductos);
+        productAdapter = new ProductAdapter(this, R.layout.product_item, listaProducto);
+        lstProduct.setAdapter(productAdapter);
 
 
         //Relaciona las variables con las variables de la GUI
         btnFiltrar = findViewById(R.id.btnFiltrar);
 
         //Conecta al servicio REST
-        serviceUser = ConnectionRest.getConnecion().create(ServiceUser.class);
+        serviceProducto = ConnectionRest.getConnecion().create(ServiceProducto.class);
 
 
         btnFiltrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cargaUsuarios();
+                cargaProductos();
             }
         });
 
+        //Evento
+        lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Product obj = listaProducto.get(position);
+                Intent intent = new Intent(MainActivity.this, MainViewDetail.class);
+                intent.putExtra("var_product", obj);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
-    void cargaUsuarios(){
-        Call<List<User>> call = serviceUser.listausuarios();
-        call.enqueue(new Callback<List<User>>() {
+    void cargaProductos(){
+        Call<List<Product>> call = serviceProducto.listaproductos();
+        call.enqueue(new Callback<List<Product>>() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                    if (response.isSuccessful()){
-                       listaTotalUsuarios = response.body();
-                       listaUser.clear();
-                       listaUser.addAll(listaTotalUsuarios);
-                       userAdapter.notifyDataSetChanged();
+                       listaTotalProductos = response.body();
+                       listaProducto.clear();
+                       listaProducto.addAll(listaTotalProductos);
+                       productAdapter.notifyDataSetChanged();
                    }
             }
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
+            public void onFailure(Call<List<Product>> call, Throwable t) {
 
             }
         });
